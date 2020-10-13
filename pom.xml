@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
-    <artifactId>ostorlab-mobile-security-scanner-plugin</artifactId>
+    <artifactId>ostorlab</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
     <properties>
@@ -20,6 +20,13 @@
         <java.level>8</java.level>
     </properties>
     <name>Ostorlab Security And Privacy Scanner</name>
+    <description>Scan Android and iOS applications using Ostorlab Mobile Application Security and Privacy Scanner</description>	    
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>	    
     <dependencyManagement>
         <dependencies>
             <dependency>

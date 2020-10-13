@@ -25,7 +25,7 @@ and assess the application on real device) and backend (assess backend interacti
 
 1. From the main Jenkins dashboard, click the **Credentials** link.
     
-    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins1.png)
+    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins1.png)
 
 2. Add new global credentials.
     -   In the **Kind** drop-down list, select **Secret text**.
@@ -33,7 +33,7 @@ and assess the application on real device) and backend (assess backend interacti
     -   Enter your API key in the Secret field.
     -   Enter a description to identify the key 
 
-![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins3.png)
+![Add Credentials](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins3.png)
 
 ### Define Jenkins Job
 

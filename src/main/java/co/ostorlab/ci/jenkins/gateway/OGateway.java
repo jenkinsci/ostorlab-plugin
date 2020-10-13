@@ -11,6 +11,7 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import hudson.FilePath;
 import hudson.model.TaskListener;
+import hudson.util.Secret;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class OGateway {
     private final File workspace;
     private final File artifactsDir;
     private final TaskListener listener;
-    private final String apiKey;
+    private final Secret apiKey;
 
     /**
      * Instantiates a new O gateway.
@@ -44,7 +45,7 @@ public class OGateway {
      * @throws IOException the io exception
      */
     public OGateway(OParameters params, File artifactsDir, FilePath workspace, TaskListener listener,
-                    String apiKey) throws IOException {
+                    Secret apiKey) throws IOException {
         this.params = params;
         this.workspace = new File(workspace.getRemote());
         this.artifactsDir = artifactsDir;
@@ -213,3 +214,4 @@ public class OGateway {
     }
 
 }
+

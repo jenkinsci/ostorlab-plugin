@@ -4,6 +4,7 @@ import co.ostorlab.ci.jenkins.mapper.CreateMobileScan;
 import co.ostorlab.ci.jenkins.mapper.GetMobileScan;
 import co.ostorlab.ci.jenkins.mapper.InputQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hudson.util.Secret;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -46,7 +47,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String getProgress(String uri, int scanId, String apiKey) throws IOException {
+    public static String getProgress(String uri, int scanId, Secret apiKey) throws IOException {
 
         GetMobileScan scan = new GetMobileScan(scanId);
         InputQuery inputQuery = new InputQuery(QUERY_GET_PROGRESS_SCAN_BY_ID, scan);
@@ -64,7 +65,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String getRisk(String uri, int scanId, String apiKey) throws IOException {
+    public static String getRisk(String uri, int scanId, Secret apiKey) throws IOException {
 
         GetMobileScan scan = new GetMobileScan(scanId);
         InputQuery inputQuery = new InputQuery(QUERY_GET_RISK_SCAN_BY_ID, scan);
@@ -81,7 +82,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String check(String uri, String apiKey) throws IOException {
+    public static String check(String uri, Secret apiKey) throws IOException {
 
         InputQuery inputQuery = new InputQuery(QUERY_GET_SUBSCRIPTIONS);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -98,7 +99,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String runRequest(String uri, String apiKey, String input) throws IOException {
+    public static String runRequest(String uri, Secret apiKey, String input) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -107,7 +108,7 @@ public class RequestHandler {
         con.setRequestProperty(CONTENT_TYPE, "application/json");
         con.setRequestProperty("Accept", "application/json");
         con.setRequestProperty("Connection", "Keep-Alive");
-        con.setRequestProperty(AUTHORIZATION, apiKey);
+        con.setRequestProperty(AUTHORIZATION, apiKey.getPlainText());
 
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
 
@@ -153,7 +154,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String upload(String uri, String apiKey, String file, String plan, String platform) throws IOException {
+    public static String upload(String uri, Secret apiKey, String file, String plan, String platform) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -163,7 +164,7 @@ public class RequestHandler {
         con.setRequestProperty("Connection", "Keep-Alive");
         con.setRequestProperty(CONTENT_TYPE, "multipart/form-data; boundary=" + BOUNDARY);
         con.setRequestProperty("Accept", "application/json");
-        con.setRequestProperty(AUTHORIZATION, apiKey);
+        con.setRequestProperty(AUTHORIZATION, apiKey.getPlainText());
 
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
@@ -223,3 +224,4 @@ public class RequestHandler {
         return json;
     }
 }
+

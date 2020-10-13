@@ -10,6 +10,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.Run;
+import hudson.util.Secret;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
@@ -24,7 +25,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * This class defines how to upload mobile binary and retrieve scan results and overall scan risk.
@@ -35,7 +35,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     private static final String apiUrl = "https://api.ostorlab.co";
     private static final int DEFAULT_WAIT_MINUTES = 30;
 
-    private String apiKey;
+    private Secret apiKey;
     private String filePath;
     private String title;
     private String plan;
@@ -48,12 +48,11 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     /**
      * Instantiates a new O plugin.
      *
-     *
      * @param filePath          the mobile application file path
      * @param title             the scan title
      * @param plan              the scan plan to use
      * @param platform          the application platform
-     * @param waitForResults     Boolean to wait for the scan results before finishing the job
+     * @param waitForResults    Boolean to wait for the scan results before finishing the job
      * @param waitMinutes       the number of minutes to wait before resuming the job
      * @param breakBuildOnScore Boolean to break build if the risk is higher than the threshold
      * @param riskThreshold     the risk threshold
@@ -76,7 +75,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      *
      * @return the api key
      */
-    public String getApiKey() {
+    public Secret getApiKey() {
         if (null != this.apiKey) {
             return this.apiKey;
         } else {
@@ -84,7 +83,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
             if (value == null || value.isEmpty()) {
                 throw new RuntimeException(System.getenv().toString());
             } else {
-                return value;
+                return Secret.fromString(value);
             }
         }
     }
@@ -95,7 +94,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      * @param apiKey the api key
      */
     public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+        this.apiKey = Secret.fromString(apiKey);
     }
 
     @Override
@@ -236,11 +235,10 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     }
 
 
-
     /**
      * Descriptor class for Build step.
      */
-    @Symbol({"apiKey", "binaryName"})
+    @Symbol("ostorlabScan")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         /**
@@ -286,3 +284,4 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     }
 
 }
+

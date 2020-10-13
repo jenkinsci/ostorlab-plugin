@@ -19,7 +19,7 @@ and assess the application on real device) and backend (assess backend interacti
 3. Copy the api key (You can add a name and an expiry date to your key)
 4. Click the save button to save your key
 
-![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins-apikey.png)
+![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins-apikey.png)
 
 ### Add Ostorlab's API key to Jenkins Credentials
 
@@ -33,24 +33,24 @@ and assess the application on real device) and backend (assess backend interacti
     -   Enter your API key in the Secret field.
     -   Enter a description to identify the key 
 
-![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins3.png)
+![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins3.png)
 
 ### Define Jenkins Job
 
-![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins4.png)
+![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins4.png)
 
 1.  Add a **Secret text** binding to your Jenkins project configuration and enter the following information:
     
-    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins5.png)
-    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins6.png)
-    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins7.png)
+    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins5.png)
+    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins6.png)
+    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins7.png)
     -   **Variable:** Enter the name **apiKey**
     -   **Credentials:** Select specific credentials and choose the one defined in step 1
 
 2.  Add a **Run Ostorlab Security Scanner** build step to your Jenkins project configuration and enter the following information:
     
-    ![Api key Step1](/home/asasas333_3/IdeaProjects/oplugin/oplugin/images/jenkins8.png)
-    ![Api key Step1](/home/asasas333_3/IdeaProjects/oplugin/oplugin/images/jenkins9.png)
+    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins8.png)
+    ![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins9.png)
     -   **File Path:** Enter the full path to the mobile application file that you want to scan. 
 
 3. Click on Advanced settings to configure your run: 
@@ -61,8 +61,8 @@ and assess the application on real device) and backend (assess backend interacti
     -   **Max Wait Time (in minutes)**: Duration to wait before the job times out 
     -   **Break Build on higher Security Risk threshold**: If selected, the Jenkins job will fail if the findings risk equals or exceeds the specified thresholds (see below).
     -   **Security Risk Threshold**: Minimum Risk threshold that will cause a build to fail
-![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins10.png)
+![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins10.png)
 
 4. Kick off build
    Kick off your mobile builds and you will see the scan risk in the artifacts folder.
-![Api key Step1](https://github.com/amine3/ostorlab-plugin/tree/master/images/jenkins11.png)
+![Api key Step1](https://github.com/amine3/ostorlab-plugin/blob/master/images/jenkins11.png)

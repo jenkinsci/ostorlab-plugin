@@ -1,0 +1,78 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:section title="${%title}">
+		<f:entry title="${%filePath}" field="filePath">
+			<f:textbox field="filePath" />
+		</f:entry>
+
+		<f:advanced>
+
+			<f:entry title="${%scanTitle}" field="title">
+				<f:textbox field="title" />
+			</f:entry>
+
+			<f:entry title="${%scanPlatform}" field="platform">
+				<select name="platform">
+				      <option value="android" selected="${instance.plan.equals('android')? 'true':null}">Android</option>
+				      <option value="ios" selected="${instance.plan.equals('ios')? 'true':null}">iOS</option>
+                </select>
+			</f:entry>
+
+			<f:entry title="${%scanPlan}" field="plan">
+				<select name="plan">
+				      <option value="free" selected="${instance.plan.equals('free')? 'true':null}">Free</option>
+				      <option value="unlimited" selected="${instance.plan.equals('unlimited')? 'true':null}">Unlimited static scan</option>
+				      <option value="dynamic" selected="${instance.plan.equals('dynamic')? 'true':null}">Dynamic scan</option>
+				      <option value="static_dynamic_backend" selected="${instance.plan.equals('static_dynamic_backend')? 'true':null}">Static Dynamic Backend</option>
+                </select>
+			</f:entry>
+
+            <f:entry title="${%waitForResults}" field="waitForResults">
+				<f:checkbox field="waitForResults" />
+			</f:entry>
+
+            <f:entry title="${%waitMinutes}" field="waitMinutes">
+                <select name="waitMinutes">
+                    <option value="5"
+                        selected="${instance.waitMinutes.equals(5)? 'true':null}">5 Minutes</option>
+                    <option value="10"
+                        selected="${instance.waitMinutes.equals(10)? 'true':null}">10 Minutes</option>
+                    <option value="15"
+                        selected="${instance.waitMinutes.equals(15)? 'true':null}">15 Minutes</option>
+                    <option value="20"
+                        selected="${instance.waitMinutes.equals(20)? 'true':null}">20 Minutes</option>
+                    <option value="25"
+                        selected="${instance.waitMinutes.equals(25)? 'true':null}">25 Minutes</option>
+                    <option value="30"
+                        selected="${instance.waitMinutes.equals(30)? 'true':null}">30 Minutes</option>
+                    <option value="60"
+                        selected="${instance.waitMinutes.equals(60)? 'true':null}">1 Hour</option>
+                    <option value="120"
+                        selected="${instance.waitMinutes.equals(120)? 'true':null}">2 Hours</option>
+                </select>
+            </f:entry>
+
+            <f:entry title="${%breakBuildOnScore}" field="breakBuildOnScore">
+                <f:checkbox field="breakBuildOnScore" />
+            </f:entry>
+
+            <f:entry title="${%riskThreshold}" field="riskThreshold">
+                <select name="riskThreshold">
+                    <option value="HIGH"
+                        selected="${instance.riskThreshold.equals(HIGH)? 'true':null}">HIGH</option>
+                    <option value="MEDIUM"
+                        selected="${instance.riskThreshold.equals(MEDIUM)? 'true':null}">MEDIUM</option>
+                    <option value="LOW"
+                        selected="${instance.riskThreshold.equals(LOW)? 'true':null}">LOW</option>
+                    <option value="POTENTIALLY"
+                        selected="${instance.riskThreshold.equals(POTENTIALLY)? 'true':null}">POTENTIALLY</option>
+                    <option value="HARDENING"
+                        selected="${instance.riskThreshold.equals(HARDENING)? 'true':null}">HARDENING</option>
+                </select>
+            </f:entry>
+
+		</f:advanced>
+	</f:section>
+
+</j:jelly>

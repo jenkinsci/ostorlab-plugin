@@ -9,7 +9,7 @@
     </parent>
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>ostorlab</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>1.0</version>
     <packaging>hpi</packaging>
     <properties>
         <revision>1.0</revision>

@@ -120,7 +120,7 @@ public class RequestHandler {
         StringBuilder content;
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(con.getErrorStream()))) {
+                new InputStreamReader(con.getErrorStream(), "UTF-8"))) {
 
             String line;
             content = new StringBuilder();
@@ -203,7 +203,7 @@ public class RequestHandler {
         StringBuilder content;
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(con.getErrorStream()))) {
+                new InputStreamReader(con.getErrorStream(), "UTF-8"))) {
 
             String line;
             content = new StringBuilder();

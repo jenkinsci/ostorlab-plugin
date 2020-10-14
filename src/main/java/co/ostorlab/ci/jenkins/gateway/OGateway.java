@@ -85,7 +85,7 @@ public class OGateway {
             Integer countRemainingScans = getCountRemainingScans();
             if (countRemainingScans != null && countRemainingScans > 0) {
                 UploadInfo uploadInfo = upload();
-                if (params.isWaitingForResults()) {
+                if (uploadInfo != null && params.isWaitingForResults()) {
                     waitForResults(uploadInfo);
                 }
             } else {
@@ -158,7 +158,9 @@ public class OGateway {
                                 + ") is higher than threshold " + params.getRiskThreshold());
                     }
                 }
-                info("test passed with risk " + riskInfo.getRisk() + getElapsedMinutes(started));
+                if (riskInfo != null && riskInfo.getRisk() != null) {
+                    info("test passed with risk " + riskInfo.getRisk() + getElapsedMinutes(started));
+                }
                 return;
             }
         }

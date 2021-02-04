@@ -30,7 +30,7 @@ public class RequestHandler {
             " progress}}";
 
     private static final String QUERY_GET_SUBSCRIPTIONS = "query getSubscriptions {" +
-            "subscriptions { subscriptions { countRemainingScan plan { product {scanType} }}}}";
+            "subscriptions { subscriptions { countRemainingScan plan { maxScans product {scanType} }}}}";
 
     private static final String TWO_HYPHENS = "--";
     private static final String BOUNDARY = "*****" + System.currentTimeMillis() + "*****";

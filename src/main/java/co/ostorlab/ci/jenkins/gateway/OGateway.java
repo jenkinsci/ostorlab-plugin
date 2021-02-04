@@ -2,7 +2,6 @@ package co.ostorlab.ci.jenkins.gateway;
 
 import co.ostorlab.ci.jenkins.connector.OParameters;
 import co.ostorlab.ci.jenkins.connector.RiskInfo;
-import co.ostorlab.ci.jenkins.connector.Subscriptions;
 import co.ostorlab.ci.jenkins.connector.UploadInfo;
 import co.ostorlab.ci.jenkins.utils.FileHelper;
 import co.ostorlab.ci.jenkins.utils.RequestHandler;
@@ -27,6 +26,7 @@ public class OGateway {
     private static final String RESULT_UPLOADED_JSON = "/result-uploaded.json";
     private static final String TEST_RISK_JSON = "/test-risk.json";
     private static final int ONE_MINUTE = 1000 * 60;
+    private static final String PLAN = "static_dynamic_backend";
 
     private final OParameters params;
     private final File workspace;
@@ -82,20 +82,15 @@ public class OGateway {
     public void execute() throws IOException {
         info("Executing step for " + this);
         try {
-            Integer countRemainingScans = getCountRemainingScans();
-            if (countRemainingScans != null && countRemainingScans > 0) {
-                UploadInfo uploadInfo = upload();
-                if (uploadInfo != null && params.isWaitingForResults()) {
-                    waitForResults(uploadInfo);
-                }
-            } else {
-                throw new IOException("Add a new subscription to start the scan ");
+            UploadInfo uploadInfo = upload();
+            if (uploadInfo != null && params.isWaitingForResults()) {
+                waitForResults(uploadInfo);
             }
         } catch (RuntimeException | IOException e) {
             throw e;
         } catch (Exception e) {
             e.printStackTrace(listener.getLogger());
-            throw new IOException("Failed to analyze security", e);
+            throw new IOException("Failed to start the scan", e);
         }
     }
 
@@ -103,17 +98,6 @@ public class OGateway {
     public String toString() {
         return "ostorlab-auto-security-test [title=" + params.getTitle()
                 + ", fileName=" + params.getFilePath() + "]";
-    }
-
-    private Integer getCountRemainingScans() throws IOException, JsonException {
-        String plan = params.getPlan();
-        String url = buildUrl();
-        String countJson = RequestHandler.check(url, apiKey);
-        if (countJson.isEmpty()) {
-            return null;
-        }
-        Subscriptions subscriptions = Subscriptions.fromJson(countJson);
-        return subscriptions.getRemainingScansPerPlan().getOrDefault(plan, 0);
     }
 
     private UploadInfo upload() throws IOException, JsonException {
@@ -127,7 +111,7 @@ public class OGateway {
 
         String url = buildUrl();
         info("uploading binary " + file.getAbsolutePath() + " to " + url);
-        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), params.getPlan(), params.getPlatform());
+        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), PLAN, params.getPlatform());
         String path = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
         FileHelper.save(path, uploadJson);
         UploadInfo uploadInfo = UploadInfo.fromJson(uploadJson);

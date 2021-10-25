@@ -8,13 +8,13 @@ and assess the application on real device) and backend (assess backend interacti
 ## Prerequisites
 
 - An account at the [Ostorlab Mobile application Scanner](https://report.ostorlab.co/account/login)
-- Either use the free plan or add the desired [scan plans](https://report.ostorlab.co/plans) to your account  
+- Either use the free plan or add the desired [scan plans](https://report.ostorlab.co/settings/plans) to your account  
 
 ## Usage
 
 ### Generate an API key
 
-1. Go to the [API keys menu](https://report.ostorlab.co/library/api/keys) 
+1. Go to the [API keys menu](https://report.ostorlab.co/library/api) 
 2. Click the new button to generate a new key
 3. Copy the api key (You can add a name and an expiry date to your key)
 4. Click the save button to save your key

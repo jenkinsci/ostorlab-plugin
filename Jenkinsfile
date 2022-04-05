@@ -1,1 +1,1 @@
-buildPluginWithGradle()
+buildPlugin(platforms:['linux'])

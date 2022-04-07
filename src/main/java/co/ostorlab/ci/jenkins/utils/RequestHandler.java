@@ -1,15 +1,20 @@
 package co.ostorlab.ci.jenkins.utils;
 
+import co.ostorlab.ci.jenkins.connector.Credentials;
 import co.ostorlab.ci.jenkins.mapper.CreateMobileScan;
 import co.ostorlab.ci.jenkins.mapper.GetMobileScan;
 import co.ostorlab.ci.jenkins.mapper.InputQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.cliftonlabs.json_simple.JsonObject;
 import hudson.util.Secret;
+
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 
 import static co.ostorlab.ci.jenkins.utils.FileHelper.load;
 
@@ -17,9 +22,20 @@ public class RequestHandler {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String AUTHORIZATION = "X-Api-Key";
     private static final String POST = "POST";
-    private static final String QUERY_CREATE_MOBILE_SCAN = "mutation newMobileScan($title: String!, $assetType: String!, $application: Upload!, $plan: String!) {" +
-            "createMobileScan(title: $title, assetType:$assetType, application: $application, plan: $plan) {" +
+    private static final String QUERY_CREATE_MOBILE_SCAN = "mutation newMobileScan($title: String!, $assetType: String!, $application: Upload!, $plan: String!, $credentialIds: [Int!]) {" +
+            "createMobileScan(title: $title, assetType:$assetType, application: $application, plan: $plan, credentialIds: $credentialIds) {" +
             " scan {id}}}";
+
+    private static final String QUERY_CREATE_TEST_CREDENTIAL = "mutation CreateTestCredential($testCredentials: TestCredentialsInput!) {" +
+            "    createTestCredentials(testCredentials: $testCredentials) {" +
+            "      __typename" +
+            "      testCredentials {" +
+            "        ... on CustomTestCredentials {" +
+            "          id" +
+            "        }" +
+            "      }" +
+            "    }" +
+            "  }";
 
     private static final String QUERY_GET_RISK_SCAN_BY_ID = "query AllVulns($scanId: Int!) {" +
             "scan(scanId: $scanId) {" +
@@ -154,7 +170,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String upload(String uri, Secret apiKey, String file, String plan, String platform) throws IOException {
+    public static String upload(String uri, Secret apiKey, String file, String plan, String platform, Integer testCredential) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -169,7 +185,7 @@ public class RequestHandler {
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 
-        CreateMobileScan createMobileScan = new CreateMobileScan(platform, plan, null, "test");
+        CreateMobileScan createMobileScan = new CreateMobileScan(platform, plan, null, "test", testCredential);
         ObjectMapper objectMapper = new ObjectMapper();
         InputQuery inputCreateMobileScan = new InputQuery(QUERY_CREATE_MOBILE_SCAN, createMobileScan);
         String jsonInputString = objectMapper.writeValueAsString(inputCreateMobileScan);
@@ -222,6 +238,28 @@ public class RequestHandler {
         in.close();
         con.disconnect();
         return json;
+    }
+
+    /**
+     * Create Test credential.
+     *
+     * @param uri    the uri
+     * @param credential the list os creds
+     * @param apiKey the api key
+     * @return the response string
+     * @throws IOException the io exception
+     */
+    public static String createTestCredential(String uri, List<Credentials> credential, Secret apiKey) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonObject variableCredential = new JsonObject();
+        JsonObject creds = new JsonObject();
+        creds.put("credentials", credential);
+        JsonObject customCreds = new JsonObject();
+        customCreds.put("custom", creds);
+        variableCredential.put("testCredentials", customCreds);
+        InputQuery inputQuery = new InputQuery(QUERY_CREATE_TEST_CREDENTIAL, variableCredential);
+        String jsonInputString = objectMapper.writeValueAsString(inputQuery);
+        return runRequest(uri, apiKey, jsonInputString);
     }
 }
 

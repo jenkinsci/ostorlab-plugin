@@ -71,7 +71,19 @@
                         selected="${instance.riskThreshold.equals(HARDENING)? 'true':null}">HARDENING</option>
                 </select>
             </f:entry>
-
+            <f:entry title="Credentials">
+                <f:repeatable field="credentials" minimum="0">
+                    <table width="90%">
+                        <f:entry title="Name"  field="name" >
+                            <f:textbox />
+                        </f:entry>
+                        <f:entry title="Value"  field="value">
+                            <f:textbox />
+                        </f:entry>
+                    </table>
+                    <f:repeatableDeleteButton />
+                </f:repeatable>
+            </f:entry>
 		</f:advanced>
 	</f:section>
 

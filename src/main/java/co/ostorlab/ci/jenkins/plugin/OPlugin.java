@@ -2,6 +2,7 @@ package co.ostorlab.ci.jenkins.plugin;
 
 import co.ostorlab.ci.jenkins.connector.OParameters;
 import co.ostorlab.ci.jenkins.connector.RiskInfo;
+import co.ostorlab.ci.jenkins.connector.Credentials;
 import co.ostorlab.ci.jenkins.gateway.OGateway;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
@@ -25,6 +26,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This class defines how to upload mobile binary and retrieve scan results and overall scan risk.
@@ -44,6 +46,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     private int waitMinutes;
     private boolean breakBuildOnScore;
     private RiskInfo.RISK riskThreshold;
+    private List<Credentials> credentials;
 
     /**
      * Instantiates a new O plugin.
@@ -221,6 +224,15 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     @DataBoundSetter
     public void setScoreThreshold(RiskInfo.RISK riskThreshold) {
         this.riskThreshold = riskThreshold;
+    }
+
+    public List<Credentials> getCredentials() {
+        return credentials;
+    }
+
+    @DataBoundSetter
+    public void setCredentials(List<Credentials> credentials) {
+        this.credentials = credentials;
     }
 
     @SuppressWarnings("deprecation")

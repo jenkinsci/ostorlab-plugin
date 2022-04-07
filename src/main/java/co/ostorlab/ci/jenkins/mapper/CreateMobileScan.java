@@ -1,5 +1,8 @@
 package co.ostorlab.ci.jenkins.mapper;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The type Create mobile scan.
  */
@@ -9,6 +12,7 @@ public class CreateMobileScan {
     private final String plan;
     private final String application;
     private final String title;
+    private final List<Integer> credentialIds;
 
     /**
      * Instantiates a new Create mobile scan.
@@ -18,11 +22,12 @@ public class CreateMobileScan {
      * @param application the application
      * @param title       the title
      */
-    public CreateMobileScan(String assetType, String plan, String application, String title) {
+    public CreateMobileScan(String assetType, String plan, String application, String title, Integer testCredential) {
         this.assetType = assetType;
         this.plan = plan;
         this.application = application;
         this.title = title;
+        this.credentialIds = Arrays.asList(new Integer[]{testCredential});
     }
 
     /**
@@ -32,6 +37,15 @@ public class CreateMobileScan {
      */
     public String getAssetType() {
         return assetType;
+    }
+
+    /**
+     * Gets Credential Ids.
+     *
+     * @return the list of Credential ids
+     */
+    public List<Integer> getCredentialIds() {
+        return credentialIds;
     }
 
     /**

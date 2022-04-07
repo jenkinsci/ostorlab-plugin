@@ -1,5 +1,6 @@
 package co.ostorlab.ci.jenkins.mapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +28,11 @@ public class CreateMobileScan {
         this.plan = plan;
         this.application = application;
         this.title = title;
-        this.credentialIds = Arrays.asList(new Integer[]{testCredential});
+        if (testCredential != null) {
+            this.credentialIds = Arrays.asList(new Integer[]{testCredential});
+        } else {
+            this.credentialIds = new ArrayList<>();
+        }
     }
 
     /**

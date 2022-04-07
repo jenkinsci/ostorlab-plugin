@@ -117,9 +117,12 @@ public class OGateway {
 
         String url = buildUrl();
 
-        String createCreds = RequestHandler.createTestCredential(url, credentialsList, apiKey);
-        JsonObject createCredsResult = (JsonObject) Jsoner.deserialize(createCreds);
-        Integer testCredId = parseInt((String)((JsonObject) ((JsonObject)((JsonObject)createCredsResult.get("data")).get("createTestCredentials")).get("testCredentials")).get("id"));
+        Integer testCredId = null;
+        if (credentialsList != null && credentialsList.size() > 0) {
+            String createCreds = RequestHandler.createTestCredential(url, credentialsList, apiKey);
+            JsonObject createCredsResult = (JsonObject) Jsoner.deserialize(createCreds);
+            testCredId = parseInt((String)((JsonObject) ((JsonObject)((JsonObject)createCredsResult.get("data")).get("createTestCredentials")).get("testCredentials")).get("id"));
+        }
         info("uploading binary " + file.getAbsolutePath() + " to " + url);
         String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), PLAN, params.getPlatform(), testCredId);
         String path = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;

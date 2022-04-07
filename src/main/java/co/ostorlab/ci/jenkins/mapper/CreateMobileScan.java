@@ -1,7 +1,7 @@
 package co.ostorlab.ci.jenkins.mapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,13 +23,13 @@ public class CreateMobileScan {
      * @param application the application
      * @param title       the title
      */
-    public CreateMobileScan(String assetType, String plan, String application, String title, Integer testCredential) {
+    public CreateMobileScan(String assetType, String plan, String application, String title, Integer scanCredential) {
         this.assetType = assetType;
         this.plan = plan;
         this.application = application;
         this.title = title;
-        if (testCredential != null) {
-            this.credentialIds = Arrays.asList(new Integer[]{testCredential});
+        if (scanCredential != null) {
+            this.credentialIds = Collections.singletonList(scanCredential);
         } else {
             this.credentialIds = new ArrayList<>();
         }

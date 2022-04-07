@@ -87,7 +87,7 @@ public class OGateway {
         info("Executing step for " + this);
         try {
             UploadInfo uploadInfo = upload();
-            if (uploadInfo != null && params.isWaitingForResults()) {
+            if (params.isWaitingForResults()) {
                 waitForResults(uploadInfo);
             }
         } catch (RuntimeException | IOException e) {

@@ -7,6 +7,7 @@ import co.ostorlab.ci.jenkins.mapper.InputQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import hudson.util.Secret;
+import org.jetbrains.annotations.NotNull;
 
 
 import java.io.*;
@@ -63,7 +64,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String getProgress(String uri, int scanId, Secret apiKey) throws IOException {
+    public static @NotNull String getProgress(String uri, int scanId, Secret apiKey) throws IOException {
 
         GetMobileScan scan = new GetMobileScan(scanId);
         InputQuery inputQuery = new InputQuery(QUERY_GET_PROGRESS_SCAN_BY_ID, scan);
@@ -81,7 +82,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String getRisk(String uri, int scanId, Secret apiKey) throws IOException {
+    public static @NotNull String getRisk(String uri, int scanId, Secret apiKey) throws IOException {
 
         GetMobileScan scan = new GetMobileScan(scanId);
         InputQuery inputQuery = new InputQuery(QUERY_GET_RISK_SCAN_BY_ID, scan);
@@ -98,7 +99,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String check(String uri, Secret apiKey) throws IOException {
+    public static @NotNull String check(String uri, Secret apiKey) throws IOException {
 
         InputQuery inputQuery = new InputQuery(QUERY_GET_SUBSCRIPTIONS);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -115,7 +116,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String runRequest(String uri, Secret apiKey, String input) throws IOException {
+    public static @NotNull String runRequest(String uri, Secret apiKey, String input) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -136,7 +137,7 @@ public class RequestHandler {
         StringBuilder content;
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(con.getErrorStream(), "UTF-8"))) {
+                new InputStreamReader(con.getErrorStream(), StandardCharsets.UTF_8))) {
 
             String line;
             content = new StringBuilder();
@@ -144,10 +145,10 @@ public class RequestHandler {
             while ((line = br.readLine()) != null) {
                 content.append(line);
                 content.append(System.lineSeparator());
-                System.out.println(content.toString());
+                System.out.println(content);
             }
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println(e);
         }
 
         InputStream in = con.getInputStream();
@@ -170,7 +171,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static String upload(String uri, Secret apiKey, String file, String plan, String platform, Integer testCredential) throws IOException {
+    public static @NotNull String upload(String uri, Secret apiKey, String file, String plan, String platform, Integer scanCredential) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -185,7 +186,7 @@ public class RequestHandler {
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 
-        CreateMobileScan createMobileScan = new CreateMobileScan(platform, plan, null, "test", testCredential);
+        CreateMobileScan createMobileScan = new CreateMobileScan(platform, plan, null, "test", scanCredential);
         ObjectMapper objectMapper = new ObjectMapper();
         InputQuery inputCreateMobileScan = new InputQuery(QUERY_CREATE_MOBILE_SCAN, createMobileScan);
         String jsonInputString = objectMapper.writeValueAsString(inputCreateMobileScan);
@@ -219,7 +220,7 @@ public class RequestHandler {
         StringBuilder content;
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(con.getErrorStream(), "UTF-8"))) {
+                new InputStreamReader(con.getErrorStream(), StandardCharsets.UTF_8))) {
 
             String line;
             content = new StringBuilder();
@@ -227,10 +228,10 @@ public class RequestHandler {
             while ((line = br.readLine()) != null) {
                 content.append(line);
                 content.append(System.lineSeparator());
-                System.out.println(content.toString());
+                System.out.println(content);
             }
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println(e);
         }
 
         InputStream in = con.getInputStream();
@@ -241,15 +242,15 @@ public class RequestHandler {
     }
 
     /**
-     * Create Test credential.
+     * Call API to create Test credentials.
      *
-     * @param uri    the uri
-     * @param credential the list os creds
-     * @param apiKey the api key
+     * @param uri The API url
+     * @param credential the list os credentials to add
+     * @param apiKey the api key to authenticate
      * @return the response string
      * @throws IOException the io exception
      */
-    public static String createTestCredential(String uri, List<Credentials> credential, Secret apiKey) throws IOException {
+    public static @NotNull String createTestCredential(String uri, List<Credentials> credential, Secret apiKey) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonObject variableCredential = new JsonObject();
         JsonObject creds = new JsonObject();

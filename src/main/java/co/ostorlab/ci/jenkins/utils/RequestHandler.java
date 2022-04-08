@@ -23,8 +23,8 @@ public class RequestHandler {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String AUTHORIZATION = "X-Api-Key";
     private static final String POST = "POST";
-    private static final String QUERY_CREATE_MOBILE_SCAN = "mutation newMobileScan($title: String!, $assetType: String!, $application: Upload!, $plan: String!, $credentialIds: [Int!]) {" +
-            "createMobileScan(title: $title, assetType:$assetType, application: $application, plan: $plan, credentialIds: $credentialIds) {" +
+    private static final String QUERY_CREATE_MOBILE_SCAN = "mutation newMobileScan($title: String!, $assetType: String!, $application: Upload!, $scanProfile: String!, $credentialIds: [Int!]) {" +
+            "createMobileScan(title: $title, assetType:$assetType, application: $application, scanProfile: $scanProfile, credentialIds: $credentialIds) {" +
             " scan {id}}}";
 
     private static final String QUERY_CREATE_TEST_CREDENTIAL = "mutation CreateTestCredential($testCredentials: TestCredentialsInput!) {" +
@@ -166,12 +166,12 @@ public class RequestHandler {
      * @param uri      the uri
      * @param apiKey   the api key
      * @param file     the file
-     * @param plan     the plan
+     * @param scanProfile     the scanProfile
      * @param platform the platform
      * @return the string
      * @throws IOException the io exception
      */
-    public static @NotNull String upload(String uri, Secret apiKey, String file, String plan, String platform, Integer scanCredential) throws IOException {
+    public static @NotNull String upload(String uri, Secret apiKey, String file, String scanProfile, String platform, Integer scanCredential) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -186,7 +186,7 @@ public class RequestHandler {
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 
-        CreateMobileScan createMobileScan = new CreateMobileScan(platform, plan, null, "test", scanCredential);
+        CreateMobileScan createMobileScan = new CreateMobileScan(platform, scanProfile, null, "test", scanCredential);
         ObjectMapper objectMapper = new ObjectMapper();
         InputQuery inputCreateMobileScan = new InputQuery(QUERY_CREATE_MOBILE_SCAN, createMobileScan);
         String jsonInputString = objectMapper.writeValueAsString(inputCreateMobileScan);

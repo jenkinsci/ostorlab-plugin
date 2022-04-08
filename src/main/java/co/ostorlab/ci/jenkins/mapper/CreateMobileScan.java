@@ -10,7 +10,7 @@ import java.util.List;
 public class CreateMobileScan {
 
     private final String assetType;
-    private final String plan;
+    private final String scanProfile;
     private final String application;
     private final String title;
     private final List<Integer> credentialIds;
@@ -19,13 +19,13 @@ public class CreateMobileScan {
      * Instantiates a new Create mobile scan.
      *
      * @param assetType   the asset type
-     * @param plan        the plan
+     * @param scanProfile        the scanProfile
      * @param application the application
      * @param title       the title
      */
-    public CreateMobileScan(String assetType, String plan, String application, String title, Integer scanCredential) {
+    public CreateMobileScan(String assetType, String scanProfile, String application, String title, Integer scanCredential) {
         this.assetType = assetType;
-        this.plan = plan;
+        this.scanProfile = scanProfile;
         this.application = application;
         this.title = title;
         if (scanCredential != null) {
@@ -54,12 +54,12 @@ public class CreateMobileScan {
     }
 
     /**
-     * Gets plan.
+     * Gets scanProfile.
      *
-     * @return the plan
+     * @return the scanProfile
      */
-    public String getPlan() {
-        return plan;
+    public String getScanProfile() {
+        return scanProfile;
     }
 
     /**

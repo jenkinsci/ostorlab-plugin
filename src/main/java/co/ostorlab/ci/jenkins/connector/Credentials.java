@@ -7,6 +7,11 @@ public class Credentials {
     private String name;
     private String value;
 
+    /**
+     * Class Constructor bounded to the Jenkins Data.
+     * @param name
+     * @param value
+     */
     @DataBoundConstructor
     public Credentials(String name, String value) {
         this.name = name;
@@ -17,6 +22,10 @@ public class Credentials {
         return name;
     }
 
+    /**
+     * Set Credential Name
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -25,6 +34,10 @@ public class Credentials {
         return value;
     }
 
+    /**
+     * Set Credential value
+     * @param value
+     */
     public void setValue(String value) {
         this.value = value;
     }

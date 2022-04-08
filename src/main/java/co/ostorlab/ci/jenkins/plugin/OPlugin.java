@@ -40,7 +40,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     private Secret apiKey;
     private String filePath;
     private String title;
-    private String plan;
+    private String scanProfile;
     private String platform;
     private boolean waitForResults;
     private int waitMinutes;
@@ -53,7 +53,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      *
      * @param filePath          the mobile application file path
      * @param title             the scan title
-     * @param plan              the scan plan to use
+     * @param scanProfile              the scan scanProfile to use
      * @param platform          the application platform
      * @param waitForResults    Boolean to wait for the scan results before finishing the job
      * @param waitMinutes       the number of minutes to wait before resuming the job
@@ -61,11 +61,11 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      * @param riskThreshold     the risk threshold
      */
     @DataBoundConstructor
-    public OPlugin(String filePath, String title, String plan, String platform, boolean waitForResults, int waitMinutes,
+    public OPlugin(String filePath, String title, String scanProfile, String platform, boolean waitForResults, int waitMinutes,
                    boolean breakBuildOnScore, RiskInfo.RISK riskThreshold) {
         this.filePath = filePath;
         this.title = title;
-        this.plan = plan;
+        this.scanProfile = scanProfile;
         this.platform = platform;
         this.waitForResults = waitForResults;
         this.waitMinutes = waitMinutes;
@@ -167,18 +167,18 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     }
 
     @Override
-    public String getPlan() {
-        return plan;
+    public String getScanProfile() {
+        return scanProfile;
     }
 
     /**
-     * Sets plan.
+     * Sets scanProfile.
      *
-     * @param plan the plan
+     * @param scanProfile the scanProfile
      */
     @DataBoundSetter
-    public void setPlan(String plan) {
-        this.plan = plan;
+    public void setScanProfile(String scanProfile) {
+        this.scanProfile = scanProfile;
     }
 
     @Override
@@ -226,10 +226,18 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
         this.riskThreshold = riskThreshold;
     }
 
+    /**
+     * Get the list of credentials passed from the task config
+     * @return
+     */
     public List<Credentials> getCredentials() {
         return credentials;
     }
 
+    /**
+     * Set the list of credentials passed from the task config
+     * @param credentials
+     */
     @DataBoundSetter
     public void setCredentials(List<Credentials> credentials) {
         this.credentials = credentials;

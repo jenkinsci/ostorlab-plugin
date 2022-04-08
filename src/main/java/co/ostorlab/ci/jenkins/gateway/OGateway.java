@@ -30,7 +30,7 @@ public class OGateway {
     private static final String RESULT_UPLOADED_JSON = "/result-uploaded.json";
     private static final String TEST_RISK_JSON = "/test-risk.json";
     private static final int ONE_MINUTE = 1000 * 60;
-    private static final String PLAN = "static_dynamic_backend";
+    private static final String PROFILE = "Full Scan";
 
     private final OParameters params;
     private final File workspace;
@@ -124,7 +124,7 @@ public class OGateway {
             testCredId = parseInt((String)((JsonObject) ((JsonObject)((JsonObject)createCredsResult.get("data")).get("createTestCredentials")).get("testCredentials")).get("id"));
         }
         info("uploading binary " + file.getAbsolutePath() + " to " + url);
-        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), PLAN, params.getPlatform(), testCredId);
+        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), params.getScanProfile(), params.getPlatform(), testCredId);
         String path = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
         FileHelper.save(path, uploadJson);
         UploadInfo uploadInfo = UploadInfo.fromJson(uploadJson);

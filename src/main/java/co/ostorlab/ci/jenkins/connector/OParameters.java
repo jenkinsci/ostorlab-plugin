@@ -35,11 +35,11 @@ public interface OParameters {
     int getWaitMinutes();
 
     /**
-     * Gets plan.
+     * Gets scanProfile.
      *
-     * @return the plan
+     * @return the scanProfile
      */
-    String getPlan();
+    String getScanProfile();
 
     /**
      * Gets platform.

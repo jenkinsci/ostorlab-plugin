@@ -1,6 +1,6 @@
 package co.ostorlab.ci.jenkins.connector;
 
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * The interface O parameters.
@@ -35,11 +35,11 @@ public interface OParameters {
     int getWaitMinutes();
 
     /**
-     * Gets plan.
+     * Gets scanProfile.
      *
-     * @return the plan
+     * @return the scanProfile
      */
-    String getPlan();
+    String getScanProfile();
 
     /**
      * Gets platform.
@@ -68,4 +68,11 @@ public interface OParameters {
      * @return the api url
      */
     String getApiUrl();
+
+    /**
+     * Gets api url.
+     *
+     * @return the list of credentials
+     */
+    List<Credentials> getCredentials();
 }

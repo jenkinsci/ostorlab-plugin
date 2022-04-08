@@ -16,7 +16,7 @@
         <jenkins.version>2.263.3</jenkins.version>
         <java.level>8</java.level>
         <revision>1.5</revision>
-        <changelist>-SNAPSHOT</changelist>
+        <changelist></changelist>
     </properties>
     <name>Ostorlab Security And Privacy Scanner</name>
     <description>Scan Android and iOS applications using Ostorlab Mobile Application Security and Privacy Scanner</description>	    

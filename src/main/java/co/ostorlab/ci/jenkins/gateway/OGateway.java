@@ -1,5 +1,6 @@
 package co.ostorlab.ci.jenkins.gateway;
 
+import co.ostorlab.ci.jenkins.connector.Credentials;
 import co.ostorlab.ci.jenkins.connector.OParameters;
 import co.ostorlab.ci.jenkins.connector.RiskInfo;
 import co.ostorlab.ci.jenkins.connector.UploadInfo;
@@ -17,6 +18,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * The type O gateway.
@@ -26,7 +30,7 @@ public class OGateway {
     private static final String RESULT_UPLOADED_JSON = "/result-uploaded.json";
     private static final String TEST_RISK_JSON = "/test-risk.json";
     private static final int ONE_MINUTE = 1000 * 60;
-    private static final String PLAN = "static_dynamic_backend";
+    private static final String PROFILE = "Full Scan";
 
     private final OParameters params;
     private final File workspace;
@@ -83,7 +87,7 @@ public class OGateway {
         info("Executing step for " + this);
         try {
             UploadInfo uploadInfo = upload();
-            if (uploadInfo != null && params.isWaitingForResults()) {
+            if (params.isWaitingForResults()) {
                 waitForResults(uploadInfo);
             }
         } catch (RuntimeException | IOException e) {
@@ -102,6 +106,8 @@ public class OGateway {
 
     private UploadInfo upload() throws IOException, JsonException {
         File file = FileHelper.find(artifactsDir, params.getFilePath());
+        List<Credentials> credentialsList = params.getCredentials();
+
         if (file == null) {
             file = FileHelper.find(workspace, params.getFilePath());
         }
@@ -110,8 +116,15 @@ public class OGateway {
         }
 
         String url = buildUrl();
+
+        Integer testCredId = null;
+        if (credentialsList != null && credentialsList.size() > 0) {
+            String createCreds = RequestHandler.createTestCredential(url, credentialsList, apiKey);
+            JsonObject createCredsResult = (JsonObject) Jsoner.deserialize(createCreds);
+            testCredId = parseInt((String)((JsonObject) ((JsonObject)((JsonObject)createCredsResult.get("data")).get("createTestCredentials")).get("testCredentials")).get("id"));
+        }
         info("uploading binary " + file.getAbsolutePath() + " to " + url);
-        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), PLAN, params.getPlatform());
+        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), params.getScanProfile(), params.getPlatform(), testCredId);
         String path = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
         FileHelper.save(path, uploadJson);
         UploadInfo uploadInfo = UploadInfo.fromJson(uploadJson);

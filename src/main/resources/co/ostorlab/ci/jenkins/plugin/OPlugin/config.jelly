@@ -14,17 +14,15 @@
 
 			<f:entry title="${%scanPlatform}" field="platform">
 				<select name="platform">
-				      <option value="android" selected="${instance.plan.equals('android')? 'true':null}">Android</option>
-				      <option value="ios" selected="${instance.plan.equals('ios')? 'true':null}">iOS</option>
+				      <option value="android" selected="${instance.platform.equals('android')? 'true':null}">Android</option>
+				      <option value="ios" selected="${instance.platform.equals('ios')? 'true':null}">iOS</option>
                 </select>
 			</f:entry>
 
-			<f:entry title="${%scanPlan}" field="plan">
-				<select name="plan">
-				      <option value="free" selected="${instance.plan.equals('free')? 'true':null}">Free</option>
-				      <option value="unlimited" selected="${instance.plan.equals('unlimited')? 'true':null}">Unlimited static scan</option>
-				      <option value="dynamic" selected="${instance.plan.equals('dynamic')? 'true':null}">Dynamic scan</option>
-				      <option value="static_dynamic_backend" selected="${instance.plan.equals('static_dynamic_backend')? 'true':null}">Static Dynamic Backend</option>
+			<f:entry title="${%scanProfile}" field="scanProfile">
+				<select name="scanProfile">
+                    <option value="Fast Scan" selected="${instance.scanProfile.equals('Fast Scan')? 'true':null}">Fast scan</option>
+                    <option value="Full Scan" selected="${instance.scanProfile.equals('Full Scan')? 'true':null}">Full scan</option>
                 </select>
 			</f:entry>
 
@@ -71,7 +69,19 @@
                         selected="${instance.riskThreshold.equals(HARDENING)? 'true':null}">HARDENING</option>
                 </select>
             </f:entry>
-
+            <f:entry title="Credentials">
+                <f:repeatable field="credentials" minimum="0">
+                    <table width="90%">
+                        <f:entry title="Name"  field="name" >
+                            <f:textbox />
+                        </f:entry>
+                        <f:entry title="Value"  field="value">
+                            <f:textbox />
+                        </f:entry>
+                    </table>
+                    <f:repeatableDeleteButton />
+                </f:repeatable>
+            </f:entry>
 		</f:advanced>
 	</f:section>
 

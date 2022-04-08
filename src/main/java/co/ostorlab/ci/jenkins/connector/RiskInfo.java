@@ -100,7 +100,6 @@ public class RiskInfo {
             throw new IllegalArgumentException(name + " " + message);
         }
         String risk = ((String) ((JsonObject) ((JsonObject) jsonObject.get("data")).get("scan")).get("riskRating"));
-        RiskInfo riskInfo = new RiskInfo(risk);
-        return riskInfo;
+        return new RiskInfo(risk);
     }
 }

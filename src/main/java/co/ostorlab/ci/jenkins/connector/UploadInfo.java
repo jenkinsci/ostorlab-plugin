@@ -34,11 +34,17 @@ public class UploadInfo {
         }
         //
         UploadInfo uploadInfo = new UploadInfo();
-        Integer scanId = Integer.parseInt((String) ((JsonObject) ((JsonObject) ((JsonObject) jsonObject.get("data")).get("createMobileScan")).get("scan")).get("id"));
-        uploadInfo.setScanId(scanId);
-
-        return uploadInfo;
-
+        if (jsonObject.get("data") != null &&
+                ((JsonObject) jsonObject.get("data")).get("createMobileScan") != null &&
+                ((JsonObject) ((JsonObject) jsonObject.get("data")).get("createMobileScan")).get("scan") != null &&
+                ((JsonObject) ((JsonObject) ((JsonObject) jsonObject.get("data")).get("createMobileScan")).get("scan")).get("id") != null
+        ) {
+            Integer scanId = Integer.parseInt((String) ((JsonObject) ((JsonObject) ((JsonObject) jsonObject.get("data")).get("createMobileScan")).get("scan")).get("id"));
+            uploadInfo.setScanId(scanId);
+            return uploadInfo;
+        } else {
+            throw new RuntimeException("Could not extract scan id from response " + json);
+        }
     }
 
     /**

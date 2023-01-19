@@ -219,19 +219,19 @@ public class RequestHandler {
 
         StringBuilder content;
 
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(con.getErrorStream(), StandardCharsets.UTF_8))) {
+        // hackish way to get the response from the server without calling getInputStream
+        con.getResponseCode();
+        InputStream errorStream = con.getErrorStream();
 
+        if (errorStream != null) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8));
             String line;
             content = new StringBuilder();
-
             while ((line = br.readLine()) != null) {
                 content.append(line);
                 content.append(System.lineSeparator());
-                System.out.println(content);
             }
-        } catch (Exception e) {
-            System.out.println(e);
+            throw new IOException(content.toString());
         }
 
         InputStream in = con.getInputStream();

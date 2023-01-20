@@ -11,6 +11,7 @@ import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.Run;
+import hudson.model.Result;
 import hudson.util.Secret;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -251,7 +252,12 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
             throw new IllegalStateException(Messages.OPlugin_DescriptorImpl_errors_missingKey());
         }
         this.setApiKey(token);
-        new OGateway(this, run.getArtifactsDir(), workspace, listener, this.getApiKey()).execute();
+        try {
+            new OGateway(this, run.getArtifactsDir(), workspace, listener, this.getApiKey()).execute();
+        } catch (Exception e) {
+            listener.error(e.toString());
+            run.setResult(Result.FAILURE);
+        }
     }
 
 

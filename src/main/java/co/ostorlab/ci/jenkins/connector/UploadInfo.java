@@ -43,7 +43,7 @@ public class UploadInfo {
             uploadInfo.setScanId(scanId);
             return uploadInfo;
         } else {
-            throw new RuntimeException("Could not extract scan id from response " + json);
+            throw new RuntimeException("Could not extract scan id from response: " + json);
         }
     }
 

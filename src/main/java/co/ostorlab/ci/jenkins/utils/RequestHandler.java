@@ -219,7 +219,7 @@ public class RequestHandler {
 
         StringBuilder content;
 
-        // hackish way to get the response from the server without calling getInputStream
+        // Get the response from the server without calling getInputStream
         con.getResponseCode();
         InputStream errorStream = con.getErrorStream();
 

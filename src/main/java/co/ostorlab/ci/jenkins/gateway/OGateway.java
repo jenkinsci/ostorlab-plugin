@@ -124,7 +124,7 @@ public class OGateway {
         }
         info("uploading binary " + file.getAbsolutePath() + " to " + url);
         String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), params.getScanProfile(), params.getPlatform(), testCredId);
-        info("Done uploading the binary ");
+        info("Done uploading the binary.");
         String path = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
         FileHelper.save(path, uploadJson);
         UploadInfo uploadInfo = UploadInfo.fromJson(uploadJson);

@@ -65,6 +65,8 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      * @param waitMinutes       the number of minutes to wait before resuming the job
      * @param breakBuildOnScore Boolean to break build if the risk is higher than the threshold
      * @param riskThreshold     the risk threshold
+     * @param apiKey            the API key to authenticate the requests
+     * @param JsonCredentials   the credentials in JSON format to use for the scan
      */
     @DataBoundConstructor
     public OPlugin(String filePath, String title, String scanProfile, String platform, boolean waitForResults, int waitMinutes,

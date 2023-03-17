@@ -66,3 +66,43 @@ and assess the application on real device) and backend (assess backend interacti
 4. Kick off build
    Kick off your mobile builds and you will see the scan risk in the artifacts folder.
 ![Api key Step1](https://github.com/jenkinsci/ostorlab-plugin/blob/master/images/jenkins11.png)
+
+
+### Define Jenkins Pipeline
+
+![Api key Step1](https://github.com/jenkinsci/ostorlab-plugin/blob/master/images/jenkins_pipeline_1.png)
+
+Sample step to run the scan
+
+
+```
+pipeline {
+    agent any
+    stages {
+        stage('security-test') {
+            environment {
+                apiKey = credentials('AutoApiKey')
+            }
+            steps {
+                step([$class: 'NSAutoPlugin', apiKey: env.apiKey, binaryName: 'myapk.apk', breakBuildOnScore: true, description: 'my description', group: 'mygroup', waitForResults: true, showStatusMessages: true, debug: true, proxyEnabled: false])
+            }
+        }
+    }
+}
+```
+
+The list of parameters supported:
+
+- **filePath:** (Mandatory) Enter the mobile application path
+- **apiKey:** (Mandatory) Enter the API key to authenticate the API requests.
+- **scanProfile**: Select the scan profile to run. You can choose between `Fast Scan` for rapid static analysis or `Full Scan` for full Static, Dynamic and Backend analysis.
+- **platform**: Set the platform type [android, ios]
+- **waitForResults**: (Optional) Suspend job until security analysis completes or times out
+- **waitMinutes**: (Optional) Duration to wait before the job times out
+- **breakBuildOnScore**: (Optional) If set to true, the step will fail if the findings risk equals or exceeds the thresholds.
+- **riskThreshold**: (Optional) Minimum Risk threshold that will cause a build to fail
+- **JsonCredentials**: (Optional) Credentials to use for the dynamic testing. It should be a string as valid JSON.
+  ```
+  [{"name": "username", "value": "MyUsername"}, {"name": "password", "value": "MyPassword"}]
+  ```
+- **title:** (Optional) Enter the scan title

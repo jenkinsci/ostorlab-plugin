@@ -78,13 +78,15 @@ Sample step to run the scan
 ```
 pipeline {
     agent any
+    environment {
+        apiKey = credentials('apiKey')
+        jsonCredentials = "${params.Credentials}"
+    }
+    parameters { string(name: 'Credentials', defaultValue: '[{"name": "username", "value": "MyUsername"}, {"name": "password", "value": "MyPassword"}]', description: '') }
     stages {
         stage('security-test') {
-            environment {
-                apiKey = credentials('AutoApiKey')
-            }
             steps {
-                step([$class: 'NSAutoPlugin', apiKey: env.apiKey, binaryName: 'myapk.apk', breakBuildOnScore: true, description: 'my description', group: 'mygroup', waitForResults: true, showStatusMessages: true, debug: true, proxyEnabled: false])
+                step([$class: 'OPlugin', apiKey:env.apiKey, Jsoncredentials:env.jsonCredentials, filePath: '/home/asasas/IdeaProjects/ostorlab-plugin/work/workspace/as/InsecureBankv2.apk', scanProfile: 'Fast Scan', platform: 'android'])
             }
         }
     }

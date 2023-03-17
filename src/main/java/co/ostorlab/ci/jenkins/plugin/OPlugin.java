@@ -4,6 +4,10 @@ import co.ostorlab.ci.jenkins.connector.OParameters;
 import co.ostorlab.ci.jenkins.connector.RiskInfo;
 import co.ostorlab.ci.jenkins.connector.Credentials;
 import co.ostorlab.ci.jenkins.gateway.OGateway;
+import com.github.cliftonlabs.json_simple.JsonException;
+import com.github.cliftonlabs.json_simple.JsonObject;
+import com.github.cliftonlabs.json_simple.JsonArray;
+import com.github.cliftonlabs.json_simple.Jsoner;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
@@ -27,6 +31,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,7 +59,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      *
      * @param filePath          the mobile application file path
      * @param title             the scan title
-     * @param scanProfile              the scan scanProfile to use
+     * @param scanProfile       the scan scanProfile to use
      * @param platform          the application platform
      * @param waitForResults    Boolean to wait for the scan results before finishing the job
      * @param waitMinutes       the number of minutes to wait before resuming the job
@@ -63,7 +68,8 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      */
     @DataBoundConstructor
     public OPlugin(String filePath, String title, String scanProfile, String platform, boolean waitForResults, int waitMinutes,
-                   boolean breakBuildOnScore, RiskInfo.RISK riskThreshold) {
+                   boolean breakBuildOnScore, RiskInfo.RISK riskThreshold, String apiKey,
+                   String JsonCredentials) throws JsonException {
         this.filePath = filePath;
         this.title = title;
         this.scanProfile = scanProfile;
@@ -72,6 +78,16 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
         this.waitMinutes = waitMinutes;
         this.breakBuildOnScore = breakBuildOnScore;
         this.riskThreshold = riskThreshold;
+        this.apiKey = Secret.fromString(apiKey);
+        if (JsonCredentials != null && !JsonCredentials.isEmpty()) {
+            JsonArray parsedCredentials = (JsonArray) Jsoner.deserialize(JsonCredentials);
+            this.credentials = new ArrayList<>();
+            for (Object credential : parsedCredentials) {
+                this.credentials.add(new Credentials(
+                        (String) ((JsonObject) credential).get("name"),
+                        (String) ((JsonObject) credential).get("value")));
+            }
+        }
     }
 
     /**
@@ -80,7 +96,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      * @return the api key
      */
     public Secret getApiKey() {
-        if (null != this.apiKey) {
+        if (null != this.apiKey && !this.apiKey.getPlainText().isEmpty()) {
             return this.apiKey;
         } else {
             String value = System.getenv("apiKey");
@@ -98,7 +114,12 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
      * @param apiKey the api key
      */
     public void setApiKey(String apiKey) {
-        this.apiKey = Secret.fromString(apiKey);
+        if (
+                (this.apiKey == null || this.apiKey.getPlainText().isEmpty())
+                        && (apiKey != null && !apiKey.isEmpty())
+        ) {
+            this.apiKey = Secret.fromString(apiKey);
+        }
     }
 
     @Override
@@ -229,6 +250,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
 
     /**
      * Get the list of credentials passed from the task config
+     *
      * @return
      */
     public List<Credentials> getCredentials() {
@@ -237,6 +259,7 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
 
     /**
      * Set the list of credentials passed from the task config
+     *
      * @param credentials
      */
     @DataBoundSetter
@@ -247,13 +270,10 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     @SuppressWarnings("deprecation")
     @Override
     public void perform(Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
-        String token = run.getEnvironment(listener).get("apiKey");
-        if (token == null || token.isEmpty()) {
-            throw new IllegalStateException(Messages.OPlugin_DescriptorImpl_errors_missingKey());
-        }
-        this.setApiKey(token);
         try {
-            new OGateway(this, run.getArtifactsDir(), workspace, listener, this.getApiKey()).execute();
+            String token = run.getEnvironment(listener).get("apiKey");
+            this.setApiKey(token);
+            new OGateway(this, run.getArtifactsDir(), workspace, listener, apiKey).execute();
         } catch (Exception e) {
             listener.error(e.toString());
             run.setResult(Result.FAILURE);

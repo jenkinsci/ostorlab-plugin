@@ -51,13 +51,20 @@ public class OGateway {
     public OGateway(OParameters params, File artifactsDir, FilePath workspace, TaskListener listener,
                     Secret apiKey) throws IOException {
         this.params = params;
-        this.workspace = new File(workspace.getRemote());
-        this.artifactsDir = artifactsDir;
         this.listener = listener;
         this.apiKey = apiKey;
-        if (!artifactsDir.mkdirs()) {
-            info("Could not create directory " + artifactsDir);
+        this.workspace = new File(workspace.getRemote());
+        info("Workspace: " + this.workspace.getAbsolutePath());
+        if (!this.workspace.exists()) {
+            throw new IOException("Could not find workspace directory " + this.workspace.getAbsolutePath());
         }
+
+        this.artifactsDir = artifactsDir;
+        info("Artifacts directory: " + this.artifactsDir.getAbsolutePath());
+        if (!this.artifactsDir.exists() && !this.artifactsDir.mkdirs()) {
+            throw new IOException("Could not find Artifacts directory " + this.artifactsDir.getAbsolutePath());
+        }
+
         if (params.getFilePath() == null || params.getFilePath().isEmpty()) {
             throw new IOException("Binary not specified");
         }
@@ -104,16 +111,27 @@ public class OGateway {
     }
 
     private UploadInfo upload() throws IOException, JsonException {
-        File file = FileHelper.find(artifactsDir, params.getFilePath());
+        File file = null;
+        try {
+            info("Searching for " + params.getFilePath() + " under " + artifactsDir);
+            file = FileHelper.find(artifactsDir, params.getFilePath());
+        } catch (Exception e) {
+            info("Failed to find " + params.getFilePath() + " under " + artifactsDir + "Error: " + e);
+        }
+        if (file == null) {
+            try {
+                info("Searching for " + params.getFilePath() + " under " + workspace);
+                file = FileHelper.find(workspace, params.getFilePath());
+            } catch (Exception e) {
+                info("Failed to find " + params.getFilePath() + " under " + workspace + "Error: " + e);
+            }
+        }
+
+        if (file == null) {
+            throw new IOException("Failed to find " + params.getFilePath() + " under " + workspace);
+        }
+
         List<Credentials> credentialsList = params.getCredentials();
-
-        if (file == null) {
-            file = FileHelper.find(workspace, params.getFilePath());
-        }
-        if (file == null) {
-            throw new IOException("Failed to find " + params.getFilePath() + " under " + artifactsDir);
-        }
-
         String url = buildUrl();
 
         Integer testCredId = null;

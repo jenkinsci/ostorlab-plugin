@@ -12,12 +12,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Job;
-import hudson.model.Run;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.util.Secret;
-import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -33,7 +29,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * This class defines how to upload mobile binary and retrieve scan results and overall scan risk.
@@ -274,12 +269,27 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     @Override
     public void perform(Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         try {
-            FilePath builderWorkspace = Objects.requireNonNull(run.getExecutor()).getCurrentWorkspace();
-            if (builderWorkspace != null) {
-                String token = run.getEnvironment(listener).get("apiKey");
-                this.setApiKey(token);
-                new OGateway(this, run.getArtifactsDir(), builderWorkspace, listener, apiKey).execute();
+            if (run != null) {
+                Executor executor = run.getExecutor();
+                if (executor != null) {
+                    FilePath builderWorkspace = executor.getCurrentWorkspace();
+                    if (builderWorkspace != null) {
+                        String token = run.getEnvironment(listener).get("apiKey");
+                        this.setApiKey(token);
+                        new OGateway(this, run.getArtifactsDir(), builderWorkspace, listener, apiKey).execute();
+                    } else {
+                        listener.error("Could not find Jenkins workspace.");
+                        run.setResult(Result.FAILURE);
+                    }
+                } else {
+                    listener.error("Could not find Jenkins executor.");
+                    run.setResult(Result.FAILURE);
+                }
+            } else {
+                listener.error("Could not start Jenkins run.");
+                run.setResult(Result.FAILURE);
             }
+
         } catch (Exception e) {
             listener.error(e.toString());
             run.setResult(Result.FAILURE);

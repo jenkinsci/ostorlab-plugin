@@ -21,7 +21,6 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONException;
 import org.jenkinsci.Symbol;
@@ -34,6 +33,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class defines how to upload mobile binary and retrieve scan results and overall scan risk.
@@ -274,10 +274,12 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     @Override
     public void perform(Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         try {
-            FilePath builderWorkspace = run.getExecutor().getCurrentWorkspace();
-            String token = run.getEnvironment(listener).get("apiKey");
-            this.setApiKey(token);
-            new OGateway(this, run.getArtifactsDir(), builderWorkspace, listener, apiKey).execute();
+            FilePath builderWorkspace = Objects.requireNonNull(run.getExecutor()).getCurrentWorkspace();
+            if (builderWorkspace != null) {
+                String token = run.getEnvironment(listener).get("apiKey");
+                this.setApiKey(token);
+                new OGateway(this, run.getArtifactsDir(), builderWorkspace, listener, apiKey).execute();
+            }
         } catch (Exception e) {
             listener.error(e.toString());
             run.setResult(Result.FAILURE);

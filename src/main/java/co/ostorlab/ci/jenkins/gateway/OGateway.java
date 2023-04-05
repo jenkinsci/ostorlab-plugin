@@ -12,11 +12,13 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 import hudson.FilePath;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class OGateway {
     private static final String PROFILE = "Full Scan";
 
     private final OParameters params;
-    private final File workspace;
+    private final FilePath workspace;
     private final File artifactsDir;
     private final TaskListener listener;
     private final Secret apiKey;
@@ -53,16 +55,11 @@ public class OGateway {
         this.params = params;
         this.listener = listener;
         this.apiKey = apiKey;
-        this.workspace = new File(workspace.getRemote());
-        info("Workspace: " + this.workspace.getAbsolutePath());
-        if (!this.workspace.exists()) {
-            throw new IOException("Could not find workspace directory " + this.workspace.getAbsolutePath());
-        }
-
+        this.workspace = workspace;
         this.artifactsDir = artifactsDir;
         info("Artifacts directory: " + this.artifactsDir.getAbsolutePath());
         if (!this.artifactsDir.exists() && !this.artifactsDir.mkdirs()) {
-            throw new IOException("Could not find Artifacts directory " + this.artifactsDir.getAbsolutePath());
+            info("Could not find Artifacts directory " + this.artifactsDir.getAbsolutePath());
         }
 
         if (params.getFilePath() == null || params.getFilePath().isEmpty()) {
@@ -111,24 +108,25 @@ public class OGateway {
     }
 
     private UploadInfo upload() throws IOException, JsonException {
-        File file = null;
+        byte[] fileContent = null;
+        FilePath path = null;
         try {
-            info("Searching for " + params.getFilePath() + " under " + artifactsDir);
-            file = FileHelper.find(artifactsDir, params.getFilePath());
-        } catch (Exception e) {
-            info("Failed to find " + params.getFilePath() + " under " + artifactsDir + "Error: " + e);
-        }
-        if (file == null) {
-            try {
+            if(workspace != null) {
                 info("Searching for " + params.getFilePath() + " under " + workspace);
-                file = FileHelper.find(workspace, params.getFilePath());
-            } catch (Exception e) {
-                info("Failed to find " + params.getFilePath() + " under " + workspace + "Error: " + e);
+                path = new FilePath(workspace, params.getFilePath());
+                if(path.exists()) {
+                    info("Found the application.");
+                    fileContent = IOUtils.toByteArray(path.read());
+                }
+            } else {
+                throw new IOException("Failed to find workspace");
             }
+        } catch (Exception e) {
+            info("Failed to find " + params.getFilePath() + " under " + workspace + " Error: " + e);
         }
 
-        if (file == null) {
-            throw new IOException("Failed to find " + params.getFilePath() + " under " + workspace);
+        if (fileContent == null) {
+            throw new IOException("Failed to find application file");
         }
 
         List<Credentials> credentialsList = params.getCredentials();
@@ -140,11 +138,11 @@ public class OGateway {
             JsonObject createCredsResult = (JsonObject) Jsoner.deserialize(createCreds);
             testCredId = parseInt((String)((JsonObject) ((JsonObject)((JsonObject)createCredsResult.get("data")).get("createTestCredentials")).get("testCredentials")).get("id"));
         }
-        info("uploading binary " + file.getAbsolutePath() + " to " + url);
-        String uploadJson = RequestHandler.upload(url, apiKey, file.getCanonicalPath(), params.getScanProfile(), params.getPlatform(), testCredId);
+        info("uploading binary "  + path + " to " + url);
+        String uploadJson = RequestHandler.upload(url, apiKey, params.getFilePath(), fileContent, params.getScanProfile(), params.getPlatform(), testCredId);
         info("Done uploading the binary.");
-        String path = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
-        FileHelper.save(path, uploadJson);
+        String artifactPath = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
+        FileHelper.save(artifactPath, uploadJson);
         UploadInfo uploadInfo = UploadInfo.fromJson(uploadJson);
         info("uploaded binary with scan-id " + uploadInfo.getScanId() + " and saved output to " + path);
         return uploadInfo;

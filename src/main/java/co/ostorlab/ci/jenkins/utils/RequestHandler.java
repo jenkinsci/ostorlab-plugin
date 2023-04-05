@@ -165,13 +165,14 @@ public class RequestHandler {
      *
      * @param uri      the uri
      * @param apiKey   the api key
-     * @param file     the file
+     * @param fileContent     the file
+     * @param fileName    the file
      * @param scanProfile     the scanProfile
      * @param platform the platform
      * @return the string
      * @throws IOException the io exception
      */
-    public static @NotNull String upload(String uri, Secret apiKey, String file, String scanProfile, String platform, Integer scanCredential) throws IOException {
+    public static @NotNull String upload(String uri, Secret apiKey, String fileName, byte[] fileContent, String scanProfile, String platform, Integer scanCredential) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -198,8 +199,8 @@ public class RequestHandler {
         out.writeBytes(LINE_END);
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 
-        byte[] binary = load(file);
-        out.writeBytes("Content-Disposition: form-data; name=\"0\"; filename=\"" + file + "\"" + LINE_END);
+        byte[] binary = fileContent;
+        out.writeBytes("Content-Disposition: form-data; name=\"0\"; filename=\"" + fileName + "\"" + LINE_END);
         out.writeBytes("Content-Type: application/zip" + LINE_END);
         out.writeBytes(LINE_END);
         out.write(binary, 0, binary.length);

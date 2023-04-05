@@ -21,6 +21,7 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONException;
 import org.jenkinsci.Symbol;
@@ -273,9 +274,10 @@ public class OPlugin extends Builder implements SimpleBuildStep, OParameters {
     @Override
     public void perform(Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher, @NonNull TaskListener listener) throws InterruptedException, IOException {
         try {
+            FilePath builderWorkspace = run.getExecutor().getCurrentWorkspace();
             String token = run.getEnvironment(listener).get("apiKey");
             this.setApiKey(token);
-            new OGateway(this, run.getArtifactsDir(), workspace, listener, apiKey).execute();
+            new OGateway(this, run.getArtifactsDir(), builderWorkspace, listener, apiKey).execute();
         } catch (Exception e) {
             listener.error(e.toString());
             run.setResult(Result.FAILURE);

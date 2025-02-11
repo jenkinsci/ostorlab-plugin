@@ -31,9 +31,6 @@ public class OGateway {
     private static final String TEST_RISK_JSON = "/test-risk.json";
     private static final int ONE_MINUTE = 1000 * 60;
 
-    // TODO - Why PROFILE is never used
-    private static final String PROFILE = "Full Scan";
-
     private final OParameters params;
     private final FilePath workspace;
     private final File artifactsDir;
@@ -154,7 +151,6 @@ public class OGateway {
         for (int min = 0; min < params.getWaitMinutes(); min++) {
             info("waiting results for scan " + uploadInfo.getScanId() + getElapsedMinutes(started));
             try {
-                // TODO - Busy waiting!
                 Thread.sleep(ONE_MINUTE);
             } catch (InterruptedException e) {
                 Thread.interrupted();

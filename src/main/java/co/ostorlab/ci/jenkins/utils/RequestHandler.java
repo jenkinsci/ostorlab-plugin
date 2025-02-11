@@ -148,7 +148,6 @@ public class RequestHandler {
                 System.out.println(content);
             }
         } catch (Exception e) {
-            // TODO - Better login
             System.out.println(e);
         }
 

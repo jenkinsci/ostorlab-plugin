@@ -33,7 +33,7 @@
                 <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>11</version>
+                <version>984.vb5eaac999a7e</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

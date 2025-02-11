@@ -17,8 +17,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +30,6 @@ public class OGateway {
     private static final String RESULT_UPLOADED_JSON = "/result-uploaded.json";
     private static final String TEST_RISK_JSON = "/test-risk.json";
     private static final int ONE_MINUTE = 1000 * 60;
-    private static final String PROFILE = "Full Scan";
 
     private final OParameters params;
     private final FilePath workspace;
@@ -133,13 +130,13 @@ public class OGateway {
         String url = buildUrl();
 
         Integer testCredId = null;
-        if (credentialsList != null && credentialsList.size() > 0) {
+        if (credentialsList != null && !credentialsList.isEmpty()) {
             String createCreds = RequestHandler.createTestCredential(url, credentialsList, apiKey);
             JsonObject createCredsResult = (JsonObject) Jsoner.deserialize(createCreds);
             testCredId = parseInt((String)((JsonObject) ((JsonObject)((JsonObject)createCredsResult.get("data")).get("createTestCredentials")).get("testCredentials")).get("id"));
         }
         info("uploading binary "  + path + " to " + url);
-        String uploadJson = RequestHandler.upload(url, apiKey, params.getFilePath(), fileContent, params.getScanProfile(), params.getPlatform(), testCredId);
+        String uploadJson = RequestHandler.upload(params.getTitle(), url, apiKey, params.getFilePath(), fileContent, params.getScanProfile(), params.getPlatform(), testCredId);
         info("Done uploading the binary.");
         String artifactPath = artifactsDir.getCanonicalPath() + RESULT_UPLOADED_JSON;
         FileHelper.save(artifactPath, uploadJson);

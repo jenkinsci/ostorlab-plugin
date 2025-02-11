@@ -163,6 +163,7 @@ public class RequestHandler {
     /**
      * Upload string.
      *
+     * @param title scan title
      * @param uri      the uri
      * @param apiKey   the api key
      * @param fileContent     the file
@@ -172,7 +173,7 @@ public class RequestHandler {
      * @return the string
      * @throws IOException the io exception
      */
-    public static @NotNull String upload(String uri, Secret apiKey, String fileName, byte[] fileContent, String scanProfile, String platform, Integer scanCredential) throws IOException {
+    public static @NotNull String upload(String title, String uri, Secret apiKey, String fileName, byte[] fileContent, String scanProfile, String platform, Integer scanCredential) throws IOException {
         URL url = new URL(uri);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -187,7 +188,7 @@ public class RequestHandler {
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 
-        CreateMobileScan createMobileScan = new CreateMobileScan(platform, scanProfile, null, "test", scanCredential);
+        CreateMobileScan createMobileScan = new CreateMobileScan(platform, scanProfile, null, title, scanCredential);
         ObjectMapper objectMapper = new ObjectMapper();
         InputQuery inputCreateMobileScan = new InputQuery(QUERY_CREATE_MOBILE_SCAN, createMobileScan);
         String jsonInputString = objectMapper.writeValueAsString(inputCreateMobileScan);
@@ -199,11 +200,10 @@ public class RequestHandler {
         out.writeBytes(LINE_END);
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 
-        byte[] binary = fileContent;
         out.writeBytes("Content-Disposition: form-data; name=\"0\"; filename=\"" + fileName + "\"" + LINE_END);
         out.writeBytes("Content-Type: application/zip" + LINE_END);
         out.writeBytes(LINE_END);
-        out.write(binary, 0, binary.length);
+        out.write(fileContent, 0, fileContent.length);
         out.writeBytes(LINE_END);
         out.writeBytes(TWO_HYPHENS + BOUNDARY + LINE_END);
 

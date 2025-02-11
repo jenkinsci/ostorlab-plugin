@@ -164,6 +164,7 @@ public class RequestHandler {
     /**
      * Upload string.
      *
+     * @param title scan title
      * @param uri      the uri
      * @param apiKey   the api key
      * @param fileContent     the file
